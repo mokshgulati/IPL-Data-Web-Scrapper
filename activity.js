@@ -1,13 +1,16 @@
-let request = require("request");
-let cheerio = require("cheerio");
 let fs = require("fs");
 let path = require("path");
+let request = require("request");
+let cheerio = require("cheerio");
+
 let url = "https://www.espncricinfo.com/series/ipl-2020-21-1210595";
+
 let currentWD = process.cwd();
 let exactPath = path.join(currentWD, "espncricinfo");
 fs.mkdirSync(exactPath);
 exactPath = path.join(exactPath, "Ipl");
 fs.mkdirSync(exactPath);
+
 request(url, cb);
 function cb(error, response, html) {
     if (error) {
@@ -18,6 +21,7 @@ function cb(error, response, html) {
         dataExtractor(html);
     }
 }
+
 function dataExtractor(html) {
     let searchTool = cheerio.load(html);
     let elemRep = searchTool('a[data-hover="View All Results"]');
@@ -25,6 +29,7 @@ function dataExtractor(html) {
     let newUrl = `https://www.espncricinfo.com${link}`;
     request(newUrl, newCb);
 }
+
 function newCb(error, response, html) {
     if (error) {
         console.log(error);
@@ -34,6 +39,7 @@ function newCb(error, response, html) {
         scoreCards(html);
     }
 }
+
 function scoreCards(html) {
     let searchTool = cheerio.load(html);
     let elemRepArr = searchTool('a[data-hover="Scorecard"]');
@@ -44,6 +50,7 @@ function scoreCards(html) {
         request(newUrl, callBack);
     }
 }
+
 function callBack(error, response, html) {
     if (error) {
         console.log(error);
@@ -53,6 +60,7 @@ function callBack(error, response, html) {
         players(html);
     }
 }
+
 function players(html) {
     let $ = cheerio.load(html);
     let elemRepArr = $('.Collapsible');
